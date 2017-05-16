@@ -407,9 +407,7 @@ char **argv;
 	
 	yyin = fopen(argv[1], "r");
 
-	yyparse();
-
 	printf("\n");
 
-  return 0;
+  return yyparse();
 }
