@@ -1,8 +1,5 @@
-int func(void){ int a; for(a = 1; a < 10; a = a + 1) a = a + a; return a + a; }
-int func(int a,int b,char c){ }
-extern char func(int a), func2(int b), func3_(int _)
-int func(void){int a,b,c,d; if(a>b) a = b;}
-int func(void){int a; if(a>b) a = b; else b = a;}
-int func(void){ return; }
-int func(void){ int a; return; }
-int func(void){ return a + b; }
+int a[20], b; 
+int a, b, c;
+int a[20], b[30], array[100];
+int func ( void ) { int a ; return a + 2 ; }
+int func2 ( void ) { int a, b ; return a + b ; }

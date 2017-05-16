@@ -1,5 +1,5 @@
-cminus: cminus.l cminus.y cminus.h cminus.c
+cminus: cminus.l cminus.y cminus.h
 			bison -d cminus.y
 			flex -o cminus.lex.c cminus.l
-			gcc -o cminus cminus.tab.c cminus.lex.c cminus.c -lfl -lm
+			gcc -o cminus cminus.c cminus.tab.c cminus.lex.c -lfl -lm
 			@echo Parser pronto ...

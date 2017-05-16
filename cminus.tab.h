@@ -47,9 +47,9 @@ extern int yydebug;
   {
     INTCON = 258,
     ID = 259,
-    CHARCON = 260,
-    STRINGCON = 261,
-    FUNC = 262,
+    FUNC = 260,
+    CHARCON = 261,
+    STRINGCON = 262,
     DIGIT = 263,
     TYPE = 264,
     EXTERN = 265,

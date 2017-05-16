@@ -409,5 +409,7 @@ char **argv;
 
 	yyparse();
 
+	printf("\n");
+
   return 0;
 }
