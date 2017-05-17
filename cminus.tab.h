@@ -61,7 +61,8 @@ extern int yydebug;
     WHILE = 271,
     FOR = 272,
     LOGICAL_OP = 273,
-    RELOP = 274
+    OP = 274,
+    RELOP = 275
   };
 #endif
 
@@ -72,13 +73,9 @@ union YYSTYPE
 {
 #line 11 "cminus.y" /* yacc.c:1909  */
 
-  struct ast *a;
-  double d;
-  struct symbol *s; //qual simbolo?
-  struct symlist *sl;
-  int fn; //qual funcao?
+	int intcon; // INTCON
 
-#line 82 "cminus.tab.h" /* yacc.c:1909  */
+#line 79 "cminus.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

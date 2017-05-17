@@ -9,11 +9,7 @@
 %}
 
 %union{
-  struct ast *a;
-  double d;
-  struct symbol *s; //qual simbolo?
-  struct symlist *sl;
-  int fn; //qual funcao?
+	int intcon; // INTCON
 }
 
 //declaracao de tokens
@@ -25,7 +21,7 @@
 %token DIGIT
 %token TYPE EXTERN VOID RETURN
 %token EOL
-%token IF ELSE WHILE FOR LOGICAL_OP
+%token IF ELSE WHILE FOR LOGICAL_OP OP
 
 %nonassoc <fn> RELOP
 %right '='
@@ -91,10 +87,7 @@ stmt: IF '(' expr ')' stmt  { printf("<stmt>\n"); }
 
 expr: expr RELOP expr { printf("<relop>\n"); }
 | expr LOGICAL_OP expr { printf("<logical_op>\n"); }
-| expr '+' expr { printf("<add>\n"); }
-| expr '-' expr { printf("<sub>\n"); }
-| expr '*' expr { printf("<mult>\n"); }
-| expr '/' expr { printf("<div>\n"); }
+| expr OP expr { printf("<op>\n"); }
 | '(' expr ')' 	{ printf("<expr>\n"); }
 | ID '(' exprlist ')' { printf("<id> ( <exprlist> )\n"); }
 | ID { printf("<id>\n"); }

@@ -19,10 +19,6 @@ stringcon [!-~, ]+
 
 %%
 
-"+" |
-"-" |
-"*" |
-"/" |
 "=" |
 "," |
 ";" |
@@ -31,43 +27,47 @@ stringcon [!-~, ]+
 "["	|
 "]"	|
 "(" |
-")" { return yytext[0];}
+")" 			{ return yytext[0];} //simbolos terminais
+
+"+" |
+"-" |
+"*" |
+"/" 			{ return OP; } // operadores
 
 ">" |
 "<" |
 "<>" |
 "==" |
 ">=" |
-"<=" {printf("<relop>\n"); return RELOP;}
+"<=" 			{printf("<relop>\n"); return RELOP;} // operadores de comparação
 
 "&&" |
-"||" {return LOGICAL_OP;}
+"||" 			{return LOGICAL_OP;} // operadores lógicos
 
  /* palavras reservadas */
-"if" { printf("<if>\n"); return IF;}
-"else" { printf("<else>\n"); return ELSE;}
-"while" { printf("<while>\n"); return WHILE;}
-"for"		{ printf("<for>\n"); return FOR;}
-"extern" { printf("<extern>\n"); return EXTERN; }
-"void" { return VOID;}
-"return" { printf("<return>\n"); return RETURN; }
+"if" 			{ printf("<if>\n"); return IF;}
+"else" 		{ printf("<else>\n"); return ELSE;}
+"while" 	{ printf("<while>\n"); return WHILE;}
+"for"			{ printf("<for>\n"); return FOR;}
+"extern"	{ printf("<extern>\n"); return EXTERN; }
+"void" 		{ return VOID;}
+"return" 	{ printf("<return>\n"); return RETURN; }
 
 "int" |
-"char" { printf("<type>\n"); return TYPE;}
+"char" { printf("<type>\n"); return TYPE;} // tipos de variavel
 
-[a-zA-Z][a-zA-Z0-9\_]* { printf("<id>\n"); return ID;} //nomes
-[0-9][0-9]*							{ printf("<intcon>\n"); return INTCON;}
 
-[0-9]+"."[0-9]*{EXP}? | 
-"."?[0-9]+{EXP}? { return DIGIT; }
+[a-zA-Z][a-zA-Z0-9\_]* { printf("<id>\n"); return ID;} //nomes de variáveis e funcções
 
-"/*"(.)*"*/"	{ printf("<comment>\n"); }
+[0-9][0-9]*						 { yylval.intcon = atoi(yytext); printf("<intcon> %d\n", yylval.intcon ); return INTCON;}// numero inteiro
+
+"/*"(.)*"*/"					 { printf("<comment>\n"); } // comentários
 
 [ \t] //ignora espaco em branco
 
-\\\n { printf("c> ");} //ignora continuacao de linha
+\\\n //ignora continuacao de linha
 
-\n { printf("nova linha\n"); return EOL; }
+\n 										 { printf("nova linha\n"); return EOL; } // nova linha
 
-. { yyerror("Caracter desconhecido %c\n", *yytext);}
+. 										 { yyerror("Caracter desconhecido %c\n", *yytext);}
 %%
