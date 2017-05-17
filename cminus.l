@@ -49,7 +49,7 @@ stringcon [!-~, ]+
 "while" { printf("<while>\n"); return WHILE;}
 "for"		{ printf("<for>\n"); return FOR;}
 "extern" { printf("<extern>\n"); return EXTERN; }
-"void" {return VOID;}
+"void" { return VOID;}
 "return" { printf("<return>\n"); return RETURN; }
 
 "int" |
@@ -67,7 +67,7 @@ stringcon [!-~, ]+
 
 \\\n { printf("c> ");} //ignora continuacao de linha
 
-\n { return EOL; }
+\n { printf("nova linha\n"); return EOL; }
 
 . { yyerror("Caracter desconhecido %c\n", *yytext);}
 %%

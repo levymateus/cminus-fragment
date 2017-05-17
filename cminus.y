@@ -32,7 +32,7 @@
 %left '+' '-'
 %left '*' '/'
 
-%type <a>	expr stmt list exprlist 
+%type <a>	expr stmt exprlist 
 
 %start prog
 
@@ -71,15 +71,15 @@ param_types: VOID { printf("<param_types>\n"); }
 func: TYPE ID '(' param_types ')' '{' funclist '}' { printf("<func>\n"); }
 ;
 
-funclist: TYPE var_decl var_dcl_list ';' stmt  { printf("<funclist>\n"); }
+funclist: TYPE var_decl var_dcl_list ';' stmt { printf("<funclist>\n"); }
+;
 
 paramlist:
 | ',' TYPE ID paramlist { printf("<paramlist>\n"); }
 | ',' TYPE ID '[' ']' paramlist { printf("<paramlist>\n"); }
 ;
 
-stmt: 
-| IF '(' expr ')' stmt  { printf("<stmt>\n"); }
+stmt: IF '(' expr ')' stmt  { printf("<stmt>\n"); }
 | IF '(' expr ')' stmt ELSE stmt { printf("<stmt>\n"); }
 | WHILE '(' expr ')' stmt { printf("<stmt>\n"); }
 | FOR '(' assg ';' expr ';' assg ')' stmt { printf("<stmt>\n"); }
