@@ -27,22 +27,22 @@ stringcon [!-~, ]+
 "["	|
 "]"	|
 "(" |
-")" 			{ return yytext[0];} //simbolos terminais
+")" { return yytext[0];} //simbolos terminais
 
-"+" |
-"-" |
-"*" |
-"/" 			{ return OP; } // operadores
+"+" { return ADD; }
+"-" { return SUB; }
+"*" { return MUL; }
+"/" { return DIV; }
 
-">" |
-"<" |
-"<>" |
-"==" |
-">=" |
-"<=" 			{printf("<relop>\n"); return RELOP;} // operadores de comparação
+">" { return GREATER_THAN; }
+"<" { return LESSER_THAN; }
+"<>" { return DIFFERENT; }
+"==" { return EQUAL; }
+">=" { return GREATER_THAN_EQUAL; }
+"<=" { return LESSER_THAN_EQUAL; } // operadores de comparação
 
-"&&" |
-"||" 			{return LOGICAL_OP;} // operadores lógicos
+"&&" {return AND; } 
+"||" {return OR;} // operadores lógicos
 
  /* palavras reservadas */
 "if" 			{ printf("<if>\n"); return IF;}
@@ -54,7 +54,7 @@ stringcon [!-~, ]+
 "return" 	{ printf("<return>\n"); return RETURN; }
 
 "int" |
-"char" { printf("<type>\n"); return TYPE;} // tipos de variavel
+"char" { printf("<type>\n"); return CHAR;} // tipos de variavel
 
 
 [a-zA-Z][a-zA-Z0-9\_]* { printf("<id>\n"); return ID;} //nomes de variáveis e funcções

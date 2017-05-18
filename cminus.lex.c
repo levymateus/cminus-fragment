@@ -859,37 +859,64 @@ YY_RULE_SETUP
 { return yytext[0];} //simbolos terminais
 	YY_BREAK
 case 10:
-#line 33 "cminus.l"
+YY_RULE_SETUP
+#line 32 "cminus.l"
+{ return ADD; }
+	YY_BREAK
 case 11:
-#line 34 "cminus.l"
+YY_RULE_SETUP
+#line 33 "cminus.l"
+{ return SUB; }
+	YY_BREAK
 case 12:
-#line 35 "cminus.l"
+YY_RULE_SETUP
+#line 34 "cminus.l"
+{ return MUL; }
+	YY_BREAK
 case 13:
 YY_RULE_SETUP
 #line 35 "cminus.l"
-{ return OP; } // operadores
+{ return DIV; }
 	YY_BREAK
 case 14:
-#line 38 "cminus.l"
+YY_RULE_SETUP
+#line 37 "cminus.l"
+{ return GREATER_THAN; }
+	YY_BREAK
 case 15:
-#line 39 "cminus.l"
+YY_RULE_SETUP
+#line 38 "cminus.l"
+{ return LESSER_THAN; }
+	YY_BREAK
 case 16:
-#line 40 "cminus.l"
+YY_RULE_SETUP
+#line 39 "cminus.l"
+{ return DIFFERENT; }
+	YY_BREAK
 case 17:
-#line 41 "cminus.l"
+YY_RULE_SETUP
+#line 40 "cminus.l"
+{ return EQUAL; }
+	YY_BREAK
 case 18:
-#line 42 "cminus.l"
+YY_RULE_SETUP
+#line 41 "cminus.l"
+{ return GREATER_THAN_EQUAL; }
+	YY_BREAK
 case 19:
 YY_RULE_SETUP
 #line 42 "cminus.l"
-{printf("<relop>\n"); return RELOP;} // operadores de comparação
+{ return LESSER_THAN_EQUAL; } // operadores de comparação
 	YY_BREAK
 case 20:
-#line 45 "cminus.l"
+YY_RULE_SETUP
+#line 44 "cminus.l"
+{return AND; } 
+	YY_BREAK
 case 21:
 YY_RULE_SETUP
 #line 45 "cminus.l"
-{return LOGICAL_OP;} // operadores lógicos
+{return OR;} // operadores lógicos
 	YY_BREAK
 /* palavras reservadas */
 case 22:
@@ -932,7 +959,7 @@ case 29:
 case 30:
 YY_RULE_SETUP
 #line 57 "cminus.l"
-{ printf("<type>\n"); return TYPE;} // tipos de variavel
+{ printf("<type>\n"); return CHAR;} // tipos de variavel
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
@@ -976,7 +1003,7 @@ YY_RULE_SETUP
 #line 73 "cminus.l"
 YY_FATAL_ERROR( "flex scanner jammed" );
 	YY_BREAK
-#line 980 "cminus.lex.c"
+#line 1007 "cminus.lex.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 

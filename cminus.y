@@ -10,25 +10,29 @@
 
 %union{
 	int intcon; // INTCON
+	struct AST_NODE *ast_node;
 }
 
 //declaracao de tokens
 
-%token <d> INTCON
+%token <intcon> INTCON
 %token <s> ID  
 %token <fn> FUNC
 %token CHARCON STRINGCON
-%token DIGIT
-%token TYPE EXTERN VOID RETURN
+%token ADD SUB MUL DIV 
+%token GREATER_THAN LESSER_THAN DIFFERENT EQUAL GREATER_THAN_EQUAL LESSER_THAN_EQUAL
+%token AND OR
+%token CHAR EXTERN VOID RETURN
 %token EOL
-%token IF ELSE WHILE FOR LOGICAL_OP OP
+%token IF ELSE WHILE FOR
+
 
 %nonassoc <fn> RELOP
 %right '='
 %left '+' '-'
 %left '*' '/'
 
-%type <a>	expr stmt exprlist 
+%type <ast_node> expr stmt exprlist 
 
 %start prog
 
@@ -37,13 +41,14 @@
 prog: 
 | dcl ';' EOL prog { printf("<dcl>\n"); }
 | func EOL prog { printf("<func>\n"); }
+| prog stmt EOL { printf("=%d\n", evaluation($2)); exit(0); }
 ;
 
-dcl: TYPE var_decl var_dcl_list 															{ printf("<dcl>\n"); }
-| EXTERN TYPE ID '(' param_types ')' param_types_list 			{ printf("<dcl>\n"); }
-| EXTERN VOID ID '(' param_types ')' param_types_list 		{ printf("<dcl>\n"); }
-| VOID ID '(' param_types ')' param_types_list 							{ printf("<dcl>\n"); }
-| TYPE ID '(' param_types ')' param_types_list 								{ printf("<dcl>\n"); }
+dcl: CHAR var_decl var_dcl_list { printf("<dcl>\n"); }
+| EXTERN CHAR ID '(' param_types ')' param_types_list 				{ printf("<dcl>\n"); }
+| EXTERN VOID ID '(' param_types ')' param_types_list 				{ printf("<dcl>\n"); }
+| VOID ID '(' param_types ')' param_types_list 								{ printf("<dcl>\n"); }
+| CHAR ID '(' param_types ')' param_types_list 								{ printf("<dcl>\n"); }
 ;
 
 var_dcl_list: /*vazio*/
@@ -60,19 +65,19 @@ var_decl:
 ;
 
 param_types: VOID { printf("<param_types>\n"); }
-| TYPE ID '[' ']' paramlist { printf("<param_types>\n"); }
-| TYPE ID paramlist { printf("<param_types>\n"); }
+| CHAR ID '[' ']' paramlist { printf("<param_types>\n"); }
+| CHAR ID paramlist { printf("<param_types>\n"); }
 ; 
 
-func: TYPE ID '(' param_types ')' '{' funclist '}' { printf("<func>\n"); }
+func: CHAR ID '(' param_types ')' '{' funclist '}' { printf("<func>\n"); }
 ;
 
-funclist: TYPE var_decl var_dcl_list ';' stmt { printf("<funclist>\n"); }
+funclist: CHAR var_decl var_dcl_list ';' stmt { printf("<funclist>\n"); }
 ;
 
 paramlist:
-| ',' TYPE ID paramlist { printf("<paramlist>\n"); }
-| ',' TYPE ID '[' ']' paramlist { printf("<paramlist>\n"); }
+| ',' CHAR ID paramlist { printf("<paramlist>\n"); }
+| ',' CHAR ID '[' ']' paramlist { printf("<paramlist>\n"); }
 ;
 
 stmt: IF '(' expr ')' stmt  { printf("<stmt>\n"); }
@@ -85,13 +90,22 @@ stmt: IF '(' expr ')' stmt  { printf("<stmt>\n"); }
 | expr { printf("<stmt>\n"); }
 ;
 
-expr: expr RELOP expr { printf("<relop>\n"); }
-| expr LOGICAL_OP expr { printf("<logical_op>\n"); }
-| expr OP expr { printf("<op>\n"); }
+expr: expr AND expr { printf("<AND>\n"); }
+| expr OR expr { printf("<OR>\n"); }
+| expr GREATER_THAN expr { printf("<GREATER_THAN>\n"); }
+| expr LESSER_THAN expr { printf("<LESSER_THAN>\n"); }
+| expr DIFFERENT expr { printf("<DIFERRENT>\n"); }
+| expr EQUAL expr { printf("<EQUAL>\n"); }
+| expr GREATER_THAN_EQUAL expr { printf("<GREATER_THAN_EQUAL>\n"); }
+| expr LESSER_THAN_EQUAL expr { printf("<LESSER_THAN_EQUAL>\n"); }
+| expr ADD expr { printf("<add>\n"); $$ = new_ast(ADD, $1, $3); } 
+| expr SUB expr { printf("<sub>\n"); $$ = new_ast(SUB, $1, $3);} 
+| expr MUL expr { printf("<mul>\n"); $$ = new_ast(MUL, $1, $3);} 
+| expr DIV expr { printf("<div>\n"); $$ = new_ast(DIV, $1, $3);} 
 | '(' expr ')' 	{ printf("<expr>\n"); }
 | ID '(' exprlist ')' { printf("<id> ( <exprlist> )\n"); }
-| ID { printf("<id>\n"); }
-| INTCON { printf("<intcon>\n"); }
+| ID { printf("<id>\n"); $$ = new_declaration($1); }
+| INTCON { printf("<intcon> "); $$ = new_number($1); }
 | CHARCON { printf("<charcon>\n"); }
 | STRINGCON { printf("<stringcon>\n"); }
 ;
