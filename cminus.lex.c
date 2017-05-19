@@ -963,47 +963,51 @@ YY_RULE_SETUP
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 60 "cminus.l"
-{ printf("<id>\n"); return ID;} //nomes de variáveis e funcções
+#line 59 "cminus.l"
+{ 
+	yylval.symbol = lookup(yytext); 
+	printf("<id>\n"); 
+	return ID;
+} //nomes de variáveis e funcções
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 62 "cminus.l"
+#line 65 "cminus.l"
 { yylval.intcon = atoi(yytext); printf("<intcon> %d\n", yylval.intcon ); return INTCON;}// numero inteiro
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 64 "cminus.l"
+#line 67 "cminus.l"
 { printf("<comment>\n"); } // comentários
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 66 "cminus.l"
+#line 69 "cminus.l"
 //ignora espaco em branco
 	YY_BREAK
 case 35:
 /* rule 35 can match eol */
 YY_RULE_SETUP
-#line 68 "cminus.l"
+#line 71 "cminus.l"
 //ignora continuacao de linha
 	YY_BREAK
 case 36:
 /* rule 36 can match eol */
 YY_RULE_SETUP
-#line 70 "cminus.l"
+#line 73 "cminus.l"
 { printf("nova linha\n"); return EOL; } // nova linha
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 72 "cminus.l"
+#line 75 "cminus.l"
 { yyerror("Caracter desconhecido %c\n", *yytext);}
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 73 "cminus.l"
+#line 76 "cminus.l"
 YY_FATAL_ERROR( "flex scanner jammed" );
 	YY_BREAK
-#line 1007 "cminus.lex.c"
+#line 1011 "cminus.lex.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2016,7 +2020,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 73 "cminus.l"
+#line 76 "cminus.l"
 
 
 

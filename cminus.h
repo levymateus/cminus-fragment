@@ -10,13 +10,9 @@ void yyerror(char *s, ...);
 
 #define HASH_TABLE_SIZE 999 // tamanho da tabela hash 
 
-/**
- * Ponteiro para tabela hash de simbolos.
- */
-struct SYMBOL *symbol_hash_table;
-
 enum NODE_TYPE{
-	NT_DCL
+	NT_DCL = 1000, 
+	NT_REF
 };
 
 struct AST {
@@ -37,18 +33,26 @@ struct SYMBOL {
 		char char_value;
 	};	
 	struct AST *function;
-	struct ARGUMENTS *arg_list;
+	struct SYMBOL_LIST *symbol_list;
 };
 
 /**
  * Nó de argumentos de função.
  **/
-struct ARGUMENTS {
+struct SYMBOL_LIST {
 	struct SYMBOL *symbol;
-	struct ARGUMENTS *next_arg;
+	struct SYMBOL_LIST *next;
 };
 
-struct SYMBOL_DCL {
+/**
+ * Ponteiro para tabela hash de simbolos.
+ */
+struct SYMBOL symbol_hash_table[HASH_TABLE_SIZE];
+
+/**
+ * Usadado para declaração de variáveis
+ */
+struct SYMBOL_REF {
 	int node_type;
 	struct SYMBOL *symbol;
 };
@@ -61,18 +65,38 @@ struct INTCON_NUMBER {
 typedef struct AST AST;
 typedef struct INTCON_NUMBER INTCON_NUMBER;
 typedef struct SYMBOL SYMBOL;
-typedef struct ARGUMENTS ARGUMENTS;
+typedef struct SYMBOL_LIST SYMBOL_LIST;
+typedef struct SYMBOL_REF SYMBOL_REF;
 
 /**
  * cria um nó do tipo NT_INTCON
  **/
-AST *new_number ( int number );
+AST *new_number (int number);
 
 /**
  * cria um AST
  **/
 AST *new_ast (int node_type , AST *left , AST *right);
 
+/**
+ *
+ **/
 int evaluation(AST* ast);
 
-AST* new_declaration(SYMBOL *symbol);
+/**
+ *
+ *
+ **/
+SYMBOL_LIST *new_symbol_list(SYMBOL *symbol, SYMBOL_LIST *next);
+
+/**
+ * Novo símbolo de referencia, variavel.
+ **/
+AST* new_ref(SYMBOL *symbol);
+
+/**
+ * Guarda na tabela hash.
+ **/
+SYMBOL* lookup(char *symbol);
+
+void printTable();

@@ -56,8 +56,11 @@ stringcon [!-~, ]+
 "int" |
 "char" { printf("<type>\n"); return CHAR;} // tipos de variavel
 
-
-[a-zA-Z][a-zA-Z0-9\_]* { printf("<id>\n"); return ID;} //nomes de variáveis e funcções
+[a-zA-Z][a-zA-Z0-9\_]* { 
+	yylval.symbol = lookup(yytext); 
+	printf("<id>\n"); 
+	return ID;
+} //nomes de variáveis e funcções
 
 [0-9][0-9]*						 { yylval.intcon = atoi(yytext); printf("<intcon> %d\n", yylval.intcon ); return INTCON;}// numero inteiro
 

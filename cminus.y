@@ -10,14 +10,14 @@
 
 %union{
 	int intcon; // INTCON
+	struct SYMBOL *symbol;
 	struct AST_NODE *ast_node;
 }
 
 //declaracao de tokens
 
 %token <intcon> INTCON
-%token <s> ID  
-%token <fn> FUNC
+%token <symbol> ID  
 %token CHARCON STRINGCON
 %token ADD SUB MUL DIV 
 %token GREATER_THAN LESSER_THAN DIFFERENT EQUAL GREATER_THAN_EQUAL LESSER_THAN_EQUAL
@@ -27,7 +27,6 @@
 %token IF ELSE WHILE FOR
 
 
-%nonassoc <fn> RELOP
 %right '='
 %left '+' '-'
 %left '*' '/'
@@ -41,7 +40,8 @@
 prog: 
 | dcl ';' EOL prog { printf("<dcl>\n"); }
 | func EOL prog { printf("<func>\n"); }
-| prog stmt EOL { printf("=%d\n", evaluation($2)); exit(0); }
+//| prog stmt EOL { printf("=%d\n", evaluation($2)); exit(0); }
+| expr
 ;
 
 dcl: CHAR var_decl var_dcl_list { printf("<dcl>\n"); }
@@ -104,7 +104,7 @@ expr: expr AND expr { printf("<AND>\n"); }
 | expr DIV expr { printf("<div>\n"); $$ = new_ast(DIV, $1, $3);} 
 | '(' expr ')' 	{ printf("<expr>\n"); }
 | ID '(' exprlist ')' { printf("<id> ( <exprlist> )\n"); }
-| ID { printf("<id>\n"); $$ = new_declaration($1); }
+| ID { printf("<new_ref>\n"); $$ = new_ref($1); }
 | INTCON { printf("<intcon> "); $$ = new_number($1); }
 | CHARCON { printf("<charcon>\n"); }
 | STRINGCON { printf("<stringcon>\n"); }

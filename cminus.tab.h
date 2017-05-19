@@ -47,31 +47,29 @@ extern int yydebug;
   {
     INTCON = 258,
     ID = 259,
-    FUNC = 260,
-    CHARCON = 261,
-    STRINGCON = 262,
-    ADD = 263,
-    SUB = 264,
-    MUL = 265,
-    DIV = 266,
-    GREATER_THAN = 267,
-    LESSER_THAN = 268,
-    DIFFERENT = 269,
-    EQUAL = 270,
-    GREATER_THAN_EQUAL = 271,
-    LESSER_THAN_EQUAL = 272,
-    AND = 273,
-    OR = 274,
-    CHAR = 275,
-    EXTERN = 276,
-    VOID = 277,
-    RETURN = 278,
-    EOL = 279,
-    IF = 280,
-    ELSE = 281,
-    WHILE = 282,
-    FOR = 283,
-    RELOP = 284
+    CHARCON = 260,
+    STRINGCON = 261,
+    ADD = 262,
+    SUB = 263,
+    MUL = 264,
+    DIV = 265,
+    GREATER_THAN = 266,
+    LESSER_THAN = 267,
+    DIFFERENT = 268,
+    EQUAL = 269,
+    GREATER_THAN_EQUAL = 270,
+    LESSER_THAN_EQUAL = 271,
+    AND = 272,
+    OR = 273,
+    CHAR = 274,
+    EXTERN = 275,
+    VOID = 276,
+    RETURN = 277,
+    EOL = 278,
+    IF = 279,
+    ELSE = 280,
+    WHILE = 281,
+    FOR = 282
   };
 #endif
 
@@ -83,9 +81,10 @@ union YYSTYPE
 #line 11 "cminus.y" /* yacc.c:1909  */
 
 	int intcon; // INTCON
+	struct SYMBOL *symbol;
 	struct AST_NODE *ast_node;
 
-#line 89 "cminus.tab.h" /* yacc.c:1909  */
+#line 88 "cminus.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;
