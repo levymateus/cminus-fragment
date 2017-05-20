@@ -1,0 +1,15 @@
+olhe as chamadas dentro do bison:
+prog -> stmt - > expr -> expr ADD expr -> INTCON (criamos um nó INTCON_NUMBER com o numero) -> INTCON (criamos um nó INTCON_NUMBER com o numero) -> ADD (criamos um nó ast e passomos para a direita um nó INTCON_NUMBER e para equerda INTCON_NUMBER);
+
+entao temos uma arvore
+
+  				stmt
+  		expr	ADD 	expr
+
+  	   INTCON           INTCON
+
+passamos essa arvore para evaluation 
+e evaluation vai caminhar sobre ela,
+pegar o valor da direita e o da esquerda 
+e realisar uma soma no case ADD com esses dois numeros 
+e retorná-los

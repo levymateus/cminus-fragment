@@ -12,6 +12,7 @@
 	int intcon; // INTCON
 	struct SYMBOL *symbol;
 	struct AST_NODE *ast_node;
+	struct SYMBOL_LIST *symbol_list;
 }
 
 //declaracao de tokens
@@ -38,10 +39,9 @@
 %%
 
 prog: 
-| dcl ';' EOL prog { printf("<dcl>\n"); }
-| func EOL prog { printf("<func>\n"); }
-//| prog stmt EOL { printf("=%d\n", evaluation($2)); exit(0); }
-| expr
+//| dcl ';' EOL prog { printf("<dcl>\n"); }
+//| func EOL prog { printf("<func>\n"); }
+| prog stmt EOL { printf("=%d\n", evaluation($2)); exit(0); }
 ;
 
 dcl: CHAR var_decl var_dcl_list { printf("<dcl>\n"); }
@@ -90,20 +90,20 @@ stmt: IF '(' expr ')' stmt  { printf("<stmt>\n"); }
 | expr { printf("<stmt>\n"); }
 ;
 
-expr: expr AND expr { printf("<AND>\n"); }
-| expr OR expr { printf("<OR>\n"); }
-| expr GREATER_THAN expr { printf("<GREATER_THAN>\n"); }
-| expr LESSER_THAN expr { printf("<LESSER_THAN>\n"); }
-| expr DIFFERENT expr { printf("<DIFERRENT>\n"); }
-| expr EQUAL expr { printf("<EQUAL>\n"); }
-| expr GREATER_THAN_EQUAL expr { printf("<GREATER_THAN_EQUAL>\n"); }
-| expr LESSER_THAN_EQUAL expr { printf("<LESSER_THAN_EQUAL>\n"); }
+expr: expr AND expr { printf("<AND>\n"); $$ = new_ast(AND, $1, $3); }
+| expr OR expr { printf("<OR>\n"); $$ = new_ast(OR, $1, $3); }
+| expr GREATER_THAN expr { printf("<GREATER_THAN>\n"); $$ = new_ast(GREATER_THAN, $1, $3);}
+| expr LESSER_THAN expr { printf("<LESSER_THAN>\n"); $$ = new_ast(LESSER_THAN, $1, $3);}
+| expr DIFFERENT expr { printf("<DIFERRENT>\n"); $$ = new_ast(DIFFERENT, $1, $3);}
+| expr EQUAL expr { printf("<EQUAL>\n"); $$ = new_ast(EQUAL, $1, $3);}
+| expr GREATER_THAN_EQUAL expr { printf("<GREATER_THAN_EQUAL>\n"); $$ = new_ast(GREATER_THAN_EQUAL, $1, $3);}
+| expr LESSER_THAN_EQUAL expr { printf("<LESSER_THAN_EQUAL>\n"); $$ = new_ast(LESSER_THAN_EQUAL, $1, $3);}
 | expr ADD expr { printf("<add>\n"); $$ = new_ast(ADD, $1, $3); } 
 | expr SUB expr { printf("<sub>\n"); $$ = new_ast(SUB, $1, $3);} 
 | expr MUL expr { printf("<mul>\n"); $$ = new_ast(MUL, $1, $3);} 
 | expr DIV expr { printf("<div>\n"); $$ = new_ast(DIV, $1, $3);} 
-| '(' expr ')' 	{ printf("<expr>\n"); }
-| ID '(' exprlist ')' { printf("<id> ( <exprlist> )\n"); }
+| '(' expr ')' 	{ printf("<expr>\n"); $$ = $2; }
+| ID '(' exprlist ')' { printf("<call> \n"); $$ = new_call($1, NULL); }// chamada de função. segundo argumento é temporariamente NULL 
 | ID { printf("<new_ref>\n"); $$ = new_ref($1); }
 | INTCON { printf("<intcon> "); $$ = new_number($1); }
 | CHARCON { printf("<charcon>\n"); }

@@ -83,8 +83,9 @@ union YYSTYPE
 	int intcon; // INTCON
 	struct SYMBOL *symbol;
 	struct AST_NODE *ast_node;
+	struct SYMBOL_LIST *symbol_list;
 
-#line 88 "cminus.tab.h" /* yacc.c:1909  */
+#line 89 "cminus.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

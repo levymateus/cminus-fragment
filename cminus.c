@@ -61,10 +61,28 @@ SYMBOL* lookup(char *symbol){
   abort(); //tabela hash cheia
 }
 
+static int call_user(FUNC_CALL* call){
+	assert(call!=NULL);
+	SYMBOL* function = call->symbol; // symbolo
+	SYMBOL_LIST* arg_list;
+	AST* args = call->ast;
+	int *old_value, *new_value;
+	int v, nargs, i;
+
+	if(!function->name){
+		yyerror("chamada para funcao %s indefinida", function->name);
+		exit(0);
+	}else printf("chamada pra a funcao %s ", function->name );
+
+	//arg_list = function->
+
+}
+
 void printTable(){
 	int i = 0; 
-	for(i = 0; i < HASH_TABLE_SIZE; i++) 
+	for(i = 0; i < HASH_TABLE_SIZE; i++) {
 		printf("[%d] %s\n", i, symbol_hash_table[i].name);
+	}
 }
 
 AST *new_number (int number){
@@ -113,6 +131,16 @@ int evaluation(AST *ast){
 		case SUB: return evaluation(ast->left) - evaluation(ast->right);
 		case MUL: return evaluation(ast->left) * evaluation(ast->right);
 		case DIV: return evaluation(ast->left) / evaluation(ast->right);
+		case OR: return evaluation(ast->left) || evaluation(ast->right);
+		case AND: return evaluation(ast->left) && evaluation(ast->right);
+		case GREATER_THAN: return evaluation(ast->left) > evaluation(ast->right);
+		case LESSER_THAN: return evaluation(ast->left) < evaluation(ast->right);
+		case DIFFERENT: return evaluation(ast->left) != evaluation(ast->right);
+		case EQUAL: return evaluation(ast->left) == evaluation(ast->right);
+		case GREATER_THAN_EQUAL: return evaluation(ast->left) >= evaluation(ast->right);
+		case LESSER_THAN_EQUAL: return evaluation(ast->left) <= evaluation(ast->right);
+		case NT_FUNC_CALL: // chamada para função
+			return call_user( (FUNC_CALL*) ast );
 		default: 
 			printf("Erro interno: bad node %c\n", ast->node_type);
 			break;
@@ -166,6 +194,22 @@ AST* new_ref(SYMBOL *symbol){
 	p->symbol = symbol;
 
 	return (AST*) p;
+}
+
+AST* new_call(SYMBOL *symbol , AST *ast){
+
+  FUNC_CALL *a = malloc(sizeof(FUNC_CALL));
+
+  if (!a){
+    yyerror("new_call: sem espaco\n");
+    exit(0);
+  }
+
+  a->node_type = NT_FUNC_CALL;
+  a->ast = ast;
+  a->symbol = symbol;
+  
+  return (AST *)a;
 }
 
 void yyerror(char *s, ...){
