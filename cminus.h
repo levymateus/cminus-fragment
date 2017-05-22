@@ -13,7 +13,8 @@ void yyerror(char *s, ...);
 enum NODE_TYPE{
 	NT_DCL 				= 1000, 
 	NT_FUNC_CALL 	= 1001, 
-	NT_REF
+	NT_REF,
+	PRINT
 };
 
 struct AST {
@@ -29,13 +30,11 @@ struct AST {
 struct SYMBOL {
 	int node_type;
 	char* name; 
-	union{
-		int int_value;
-		char char_value;
-	};	
+	int int_value;	
 	struct AST *function;
 	struct SYMBOL_LIST *symbol_list;
 };
+
 
 /**
  * Nó de argumentos de função.
@@ -81,6 +80,12 @@ struct FLOW {
 	struct AST* then; //<! ramo THEN ou list
 	struct AST* el; //<! ramo opcional ELSE
 };
+struct SYMASG{
+  int nodetype;
+  struct SYMBOL *symbol;
+  struct AST *valor;
+};
+
 
 typedef struct AST AST;
 typedef struct INTCON_NUMBER INTCON_NUMBER;
@@ -89,7 +94,7 @@ typedef struct SYMBOL_LIST SYMBOL_LIST;
 typedef struct SYMBOL_REF SYMBOL_REF;
 typedef struct FUNC_CALL FUNC_CALL;
 typedef struct FLOW FLOW;
-
+typedef struct SYMASG SYMASG;
 /**
  * cria um nó do tipo NT_INTCON
  **/
@@ -120,6 +125,8 @@ AST* new_ref(SYMBOL *symbol);
  * Chamada para uma função. 
  */
 AST* new_call(SYMBOL *symbol, AST* ast);
+
+AST *newasgn(struct SYMBOL *s , struct AST *v);
 
 /**
  * Guarda na tabela hash.

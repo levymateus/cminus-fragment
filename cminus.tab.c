@@ -1635,7 +1635,7 @@ yyreduce:
 
   case 54:
 #line 119 "cminus.y" /* yacc.c:1646  */
-    { printf("<assg>\n"); }
+    {(yyval.ast) = newasgn((yyvsp[-2].symbol), (yyvsp[0].ast));}
 #line 1640 "cminus.tab.c" /* yacc.c:1646  */
     break;
 

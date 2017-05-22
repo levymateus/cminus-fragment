@@ -135,6 +135,23 @@ AST *new_ast (int node_type , AST *left , AST *right){
   return (AST*) p;
 }
 
+AST *newasgn(struct SYMBOL *s , struct AST *v){
+
+  SYMASG *a = malloc(sizeof(struct SYMASG));
+
+  if (!a){
+    yyerror("sem espaco");
+    exit(0);
+  }
+
+  a->nodetype = '=';
+  a->symbol = s;
+  a->valor = v;
+  
+  return (struct AST *)a;
+}
+
+
 int evaluation(AST *ast){
 	assert(ast!=NULL);
 	int value = 0;
@@ -162,6 +179,9 @@ int evaluation(AST *ast){
 		case EQUAL: return evaluation(ast->left) == evaluation(ast->right);
 		case GREATER_THAN_EQUAL: return evaluation(ast->left) >= evaluation(ast->right);
 		case LESSER_THAN_EQUAL: return evaluation(ast->left) <= evaluation(ast->right);
+
+		case '=': return ((struct SYMASG *)ast)->symbol->int_value = evaluation(((struct SYMASG *)ast)->valor); break;
+
 		case NT_FUNC_CALL: // chamada para função
 			return call_user( (FUNC_CALL*) ast );
 		case IF:
@@ -282,6 +302,8 @@ AST *new_flow(int node_type, AST *cond, AST *tl, AST *tr){
 
 	return (FLOW*) p;
 }
+
+
 
 void yyerror(char *s, ...){
   va_list ap;

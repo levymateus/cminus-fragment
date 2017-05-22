@@ -34,7 +34,7 @@
 
 %type <symbol_list> paramlist
 
-%type <ast> expr stmt exprlist 
+%type <ast> expr stmt exprlist assg 
 
 %start prog
 
@@ -116,7 +116,7 @@ exprlist: expr { printf("<exprlist>\n"); }
 | expr ',' exprlist { printf("<exprlist>\n"); }
 ;
 
-assg: ID '=' expr { printf("<assg>\n"); }
+assg: ID '=' expr {$$ = newasgn($1, $3);}
 | ID '[' expr ']' '=' expr { printf("<assg>\n"); }
 ;
 
