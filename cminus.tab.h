@@ -82,7 +82,7 @@ union YYSTYPE
 
 	int intcon; // INTCON
 	struct SYMBOL *symbol;
-	struct AST_NODE *ast_node;
+	struct AST *ast;
 	struct SYMBOL_LIST *symbol_list;
 
 #line 89 "cminus.tab.h" /* yacc.c:1909  */

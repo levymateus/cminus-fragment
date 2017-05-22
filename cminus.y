@@ -11,7 +11,7 @@
 %union{
 	int intcon; // INTCON
 	struct SYMBOL *symbol;
-	struct AST_NODE *ast_node;
+	struct AST *ast;
 	struct SYMBOL_LIST *symbol_list;
 }
 
@@ -32,16 +32,17 @@
 %left '+' '-'
 %left '*' '/'
 
-%type <ast_node> expr stmt exprlist 
+%type <symbol_list> paramlist
+
+%type <ast> expr stmt exprlist 
 
 %start prog
 
 %%
 
 prog: 
-//| dcl ';' EOL prog { printf("<dcl>\n"); }
-//| func EOL prog { printf("<func>\n"); }
-| prog stmt EOL { printf("=%d\n", evaluation($2)); exit(0); }
+| dcl ';' EOL prog { printf("<dcl>\n"); }
+| func EOL prog { printf("<func>\n"); }
 ;
 
 dcl: CHAR var_decl var_dcl_list { printf("<dcl>\n"); }
@@ -70,24 +71,25 @@ param_types: VOID { printf("<param_types>\n"); }
 ; 
 
 func: CHAR ID '(' param_types ')' '{' funclist '}' { printf("<func>\n"); }
+| INTCON ID '(' param_types ')' '{' funclist '}' { printf("<func>\n"); }
 ;
 
 funclist: CHAR var_decl var_dcl_list ';' stmt { printf("<funclist>\n"); }
 ;
 
-paramlist:
-| ',' CHAR ID paramlist { printf("<paramlist>\n"); }
-| ',' CHAR ID '[' ']' paramlist { printf("<paramlist>\n"); }
+paramlist:	{ $$ = NULL; }
+| ',' CHAR ID paramlist { printf("<paramlist>\n"); $$ = new_symbol_list($3, $4); }
+| ',' CHAR ID '[' ']' paramlist { printf("<paramlist>\n"); $$ = new_symbol_list($3, $6); }
 ;
 
-stmt: IF '(' expr ')' stmt  { printf("<stmt>\n"); }
-| IF '(' expr ')' stmt ELSE stmt { printf("<stmt>\n"); }
-| WHILE '(' expr ')' stmt { printf("<stmt>\n"); }
+stmt: IF '(' expr ')' stmt 				{ printf("<IF>\n"); $$ = new_flow(IF, $3, $5, NULL); }
+| IF '(' expr ')' stmt ELSE stmt	{ printf("<IF ELSE>\n"); $$ = new_flow(IF, $3, $5, $7); }
+| WHILE '(' expr ')' stmt					{ printf("<stmt>\n"); $$ = new_flow(WHILE, $3, $5, NULL); }
 | FOR '(' assg ';' expr ';' assg ')' stmt { printf("<stmt>\n"); }
-| RETURN ';' { printf("<stmt>\n"); }
-| RETURN expr ';' { printf("<stmt>\n"); }
-| assg ';' { printf("<stmt>\n"); }
-| expr { printf("<stmt>\n"); }
+| RETURN ';' 											{ printf("<return>\n"); }
+| RETURN expr ';' 								{ printf("<return> <expr> ;\n"); }
+| assg ';' 												{ printf("<assg> ;\n"); }
+| expr 														{ printf("<stmt expr>\n"); }
 ;
 
 expr: expr AND expr { printf("<AND>\n"); $$ = new_ast(AND, $1, $3); }
@@ -105,7 +107,7 @@ expr: expr AND expr { printf("<AND>\n"); $$ = new_ast(AND, $1, $3); }
 | '(' expr ')' 	{ printf("<expr>\n"); $$ = $2; }
 | ID '(' exprlist ')' { printf("<call> \n"); $$ = new_call($1, NULL); }// chamada de função. segundo argumento é temporariamente NULL 
 | ID { printf("<new_ref>\n"); $$ = new_ref($1); }
-| INTCON { printf("<intcon> "); $$ = new_number($1); }
+| INTCON { $$ = new_number($1); }
 | CHARCON { printf("<charcon>\n"); }
 | STRINGCON { printf("<stringcon>\n"); }
 ;

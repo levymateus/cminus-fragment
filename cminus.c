@@ -8,6 +8,23 @@
 #include <assert.h>
 #include "cminus.h"
 
+// esta função cria a tabela de symbolos se ela estiver vazia
+// ou retorna a tabela em si
+static SYMBOL* get_hash_table(){
+
+	if(symbol_hash_table == NULL){
+		symbol_hash_table = (SYMBOL*) calloc(HASH_TABLE_SIZE, sizeof(SYMBOL));
+
+		if(symbol_hash_table == NULL){
+			yyerror("nao foi possivel criar a tabela hash\n");
+			exit(0);
+		}
+		return symbol_hash_table;
+	}else{
+		return symbol_hash_table;
+	}
+}
+
 static unsigned to_hash(char* symbol){
 	assert(symbol!=NULL);
 	unsigned int hash = 0;
@@ -25,6 +42,9 @@ static unsigned to_hash(char* symbol){
 SYMBOL* lookup(char *symbol){
 	printf("lookup\n");
 	assert(symbol!=NULL);
+
+	get_hash_table();
+
 	unsigned int index = to_hash(symbol) % HASH_TABLE_SIZE;
 	SYMBOL *sp = &symbol_hash_table[index];
   int scount = HASH_TABLE_SIZE;
@@ -118,12 +138,13 @@ AST *new_ast (int node_type , AST *left , AST *right){
 int evaluation(AST *ast){
 	assert(ast!=NULL);
 	int value = 0;
-	assert(ast!=NULL);
 
 	if(!ast){
 		yyerror("Erro: evaluation null\n");
 		return 0;
 	}
+
+	printf("node_type: %s\n", ast->node_type);
 
 	switch(ast->node_type){
 		case INTCON: return ((INTCON_NUMBER *) ast)->number;
@@ -134,13 +155,44 @@ int evaluation(AST *ast){
 		case OR: return evaluation(ast->left) || evaluation(ast->right);
 		case AND: return evaluation(ast->left) && evaluation(ast->right);
 		case GREATER_THAN: return evaluation(ast->left) > evaluation(ast->right);
-		case LESSER_THAN: return evaluation(ast->left) < evaluation(ast->right);
+		case LESSER_THAN: 
+			printf("lesser than\n");
+			return evaluation(ast->left) < evaluation(ast->right);
 		case DIFFERENT: return evaluation(ast->left) != evaluation(ast->right);
 		case EQUAL: return evaluation(ast->left) == evaluation(ast->right);
 		case GREATER_THAN_EQUAL: return evaluation(ast->left) >= evaluation(ast->right);
 		case LESSER_THAN_EQUAL: return evaluation(ast->left) <= evaluation(ast->right);
 		case NT_FUNC_CALL: // chamada para função
 			return call_user( (FUNC_CALL*) ast );
+		case IF:
+			if( ( ( (FLOW*) ast)->cond) != 0 ){
+				
+				if( ( (FLOW*) ast)->then ){
+					printf("teste1\n");
+					return evaluation( (AST*) ( (FLOW*) ast)->then );
+				}
+				else{
+					return 0;
+				}
+
+				if( ( (FLOW*) ast)->el ){
+					printf("teste2\n");
+					return evaluation( ( (FLOW*) ast)->el );
+				}
+				else {
+					return 0;
+				}
+
+			}
+		break;
+		case WHILE:
+			if( ( (FLOW*) ast)->then ){
+				while(evaluation( ((FLOW*) ast)->cond) != 0){
+					value = evaluation( (AST*) ( (FLOW*) ast)->then );
+				}
+
+			}
+		break;
 		default: 
 			printf("Erro interno: bad node %c\n", ast->node_type);
 			break;
@@ -212,6 +264,25 @@ AST* new_call(SYMBOL *symbol , AST *ast){
   return (AST *)a;
 }
 
+AST *new_flow(int node_type, AST *cond, AST *tl, AST *tr){
+	assert(cond!=NULL||tl!=NULL||tr!=NULL);
+	FLOW* p = calloc(1, sizeof(FLOW));
+
+	printf("flow\n");
+	
+	if(!p){
+		yyerror("new_flow: sem espaco na memoria\n");
+		exit(0);
+	}
+
+	p->node_type = node_type;
+	p->cond = cond;
+	p->then = tl;
+	p->el = tr;
+
+	return (FLOW*) p;
+}
+
 void yyerror(char *s, ...){
   va_list ap;
   va_start(ap, s);
@@ -226,6 +297,8 @@ int argc;
 char **argv;
 {
 	
+	symbol_hash_table = NULL;
+
 	yyin = fopen(argv[1], "r");
 
 	printf("\n");

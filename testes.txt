@@ -3,7 +3,7 @@ int a, b, c;
 int a[20], b[30], array[100];
 int func ( void ) { int a ; return a + 2 ; } /* funcoes */
 int func2 ( void ) { int a, b ; return a + b ; }
-int func3 ( int a ) { int i ; if ( a > 2 ) return 10 ; }
-int func4 ( int a ) { int i ; if ( a > 2 ) return 10 ; else return 0 ; }
+int func3 ( int a ) { int i ; if ( 5 > 2 ) return 10 ; }
+int func4 ( int a ) { int i ; if ( 6 > 2 ) return 10 ; else return 0 ; }
 char func5 ( int a ) { int i ; while( a > 10 ) a = a - 1 ; }
 char func6 ( int a ) { int i ; for( i = 0 ; i < 10 ; i = i + 1 ) a = a + i ; }
