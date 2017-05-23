@@ -159,7 +159,7 @@ int evaluation(AST *ast){
 
 	switch(ast->node_type){
 		case INTCON: return ((INTCON_NUMBER *) ast)->number;
-		case NT_REF: return ((SYMBOL_REF* )ast)->symbol->int_value; break;
+		case NT_REF: return ((SYMBOL_REF* )ast)->symbol->int_value;
 		case ADD: return evaluation(ast->left) + evaluation(ast->right);
 		case SUB: return evaluation(ast->left) - evaluation(ast->right);
 		case MUL: return evaluation(ast->left) * evaluation(ast->right);
