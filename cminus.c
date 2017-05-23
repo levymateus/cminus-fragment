@@ -8,31 +8,15 @@
 #include <assert.h>
 #include "cminus.h"
 
-// esta função cria a tabela de symbolos se ela estiver vazia
-// ou retorna a tabela em si
-static SYMBOL* get_hash_table(){
-
-	if(symbol_hash_table == NULL){
-		symbol_hash_table = (SYMBOL*) calloc(HASH_TABLE_SIZE, sizeof(SYMBOL));
-
-		if(symbol_hash_table == NULL){
-			yyerror("nao foi possivel criar a tabela hash\n");
-			exit(0);
-		}
-		return symbol_hash_table;
-	}else{
-		return symbol_hash_table;
-	}
-}
-
 static unsigned to_hash(char* symbol){
 	assert(symbol!=NULL);
 	unsigned int hash = 0;
-	unsigned int c = 5;
+	char c;
 	size_t i = 0;
 
 	while(symbol[i] != '\0'){
-		hash = symbol[i]^9;
+		c = symbol[i];
+		hash += c ^ 8;
 		i++;
 	}
 
@@ -40,24 +24,31 @@ static unsigned to_hash(char* symbol){
 }
 
 SYMBOL* lookup(char *symbol){
-	printf("lookup\n");
+	//printf("lookup\n");
 	assert(symbol!=NULL);
-
-	get_hash_table();
 
 	unsigned int index = to_hash(symbol) % HASH_TABLE_SIZE;
 	SYMBOL *sp = &symbol_hash_table[index];
   int scount = HASH_TABLE_SIZE;
   int i = 0;
 
-  printf("index=%d\n", index);
+  //printTable();
+
+  //printf("symbol: %s\n\n", symbol_hash_table[index].name);
+
+  /*char* name = symbol_hash_table[index].name;
+
+	if( name != NULL && strcmp(symbol, symbol_hash_table[index].name) == 0){
+		yyerror("%s já declarado\n", symbol);
+		exit(0);
+	}*/
 
   while(scount >= 0){
     if(sp->name && !strcasecmp(sp->name, symbol))
       return sp;
 
     if(!sp->name){ //nova entrada na TS
-    	printf("nova entrada na ts\n");
+    	//printf("nova entrada na ts\n");
       sp->name = strdup(symbol);
 
       if(sp->node_type == INTCON){
@@ -77,6 +68,7 @@ SYMBOL* lookup(char *symbol){
     scount--;
 
   }
+
   yyerror("overflow na tab de simbolos\n");
   abort(); //tabela hash cheia
 }
@@ -101,7 +93,9 @@ static int call_user(FUNC_CALL* call){
 void printTable(){
 	int i = 0; 
 	for(i = 0; i < HASH_TABLE_SIZE; i++) {
-		printf("[%d] %s\n", i, symbol_hash_table[i].name);
+		//if(symbol_hash_table[i].node_type == INTCON)
+		if(symbol_hash_table[i].name != NULL)
+			printf("[%d] id: %s value: %d\n", i, symbol_hash_table[i].name, symbol_hash_table[i].int_value);
 	}
 }
 
@@ -115,7 +109,7 @@ AST *new_number (int number){
 
 	p->node_type = INTCON;
 	p->number = number;
-	printf("type: %d number %d\n", p->node_type, p->number );
+	//printf("type: %d number %d\n", p->node_type, p->number );
 	return (AST*) p;
 }
 
@@ -135,9 +129,9 @@ AST *new_ast (int node_type , AST *left , AST *right){
   return (AST*) p;
 }
 
-AST *newasgn(struct SYMBOL *s , struct AST *v){
+AST *newasgn(SYMBOL *s , AST *v){
 
-  SYMASG *a = malloc(sizeof(struct SYMASG));
+  SYMASG *a = malloc(sizeof(SYMASG));
 
   if (!a){
     yyerror("sem espaco");
@@ -148,7 +142,7 @@ AST *newasgn(struct SYMBOL *s , struct AST *v){
   a->symbol = s;
   a->valor = v;
   
-  return (struct AST *)a;
+  return (AST *)a;
 }
 
 
@@ -161,10 +155,11 @@ int evaluation(AST *ast){
 		return 0;
 	}
 
-	printf("node_type: %s\n", ast->node_type);
+	//printf("node_type: %s\n", ast->node_type);
 
 	switch(ast->node_type){
 		case INTCON: return ((INTCON_NUMBER *) ast)->number;
+		case NT_REF: return ((SYMBOL_REF* )ast)->symbol->int_value; break;
 		case ADD: return evaluation(ast->left) + evaluation(ast->right);
 		case SUB: return evaluation(ast->left) - evaluation(ast->right);
 		case MUL: return evaluation(ast->left) * evaluation(ast->right);
@@ -172,9 +167,7 @@ int evaluation(AST *ast){
 		case OR: return evaluation(ast->left) || evaluation(ast->right);
 		case AND: return evaluation(ast->left) && evaluation(ast->right);
 		case GREATER_THAN: return evaluation(ast->left) > evaluation(ast->right);
-		case LESSER_THAN: 
-			printf("lesser than\n");
-			return evaluation(ast->left) < evaluation(ast->right);
+		case LESSER_THAN:	return evaluation(ast->left) < evaluation(ast->right);
 		case DIFFERENT: return evaluation(ast->left) != evaluation(ast->right);
 		case EQUAL: return evaluation(ast->left) == evaluation(ast->right);
 		case GREATER_THAN_EQUAL: return evaluation(ast->left) >= evaluation(ast->right);
@@ -188,7 +181,7 @@ int evaluation(AST *ast){
 			if( ( ( (FLOW*) ast)->cond) != 0 ){
 				
 				if( ( (FLOW*) ast)->then ){
-					printf("teste1\n");
+					//printf("teste1\n");
 					return evaluation( (AST*) ( (FLOW*) ast)->then );
 				}
 				else{
@@ -196,7 +189,7 @@ int evaluation(AST *ast){
 				}
 
 				if( ( (FLOW*) ast)->el ){
-					printf("teste2\n");
+					//printf("teste2\n");
 					return evaluation( ( (FLOW*) ast)->el );
 				}
 				else {
@@ -232,7 +225,7 @@ SYMBOL_LIST *new_symbol_list(SYMBOL *symbol, SYMBOL_LIST *next){
 	p->symbol = symbol;
 	p->next = next;
 
-	printf("symbol: %s\n", p->symbol->name);
+	//printf("symbol: %s\n", p->symbol->name);
 
 	return (SYMBOL_LIST*) p;
 }
@@ -284,11 +277,11 @@ AST* new_call(SYMBOL *symbol , AST *ast){
   return (AST *)a;
 }
 
-AST *new_flow(int node_type, AST *cond, AST *tl, AST *tr){
+AST *new_flow(int node_type, AST *cond, AST *tl, AST *tr, AST* atb){
 	assert(cond!=NULL||tl!=NULL||tr!=NULL);
 	FLOW* p = calloc(1, sizeof(FLOW));
 
-	printf("flow\n");
+	//printf("flow\n");
 	
 	if(!p){
 		yyerror("new_flow: sem espaco na memoria\n");
@@ -299,6 +292,7 @@ AST *new_flow(int node_type, AST *cond, AST *tl, AST *tr){
 	p->cond = cond;
 	p->then = tl;
 	p->el = tr;
+	p->atb = atb;
 
 	return (FLOW*) p;
 }
@@ -319,7 +313,7 @@ int argc;
 char **argv;
 {
 	
-	symbol_hash_table = NULL;
+	printTable();
 
 	yyin = fopen(argv[1], "r");
 

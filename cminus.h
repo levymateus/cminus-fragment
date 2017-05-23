@@ -8,7 +8,7 @@ extern int yylex(void);
 extern FILE * yyin; // yyin é do bison e é o ponteiro para arquivo usado em yyparse()
 void yyerror(char *s, ...);
 
-#define HASH_TABLE_SIZE 9999 // tamanho da tabela hash 
+#define HASH_TABLE_SIZE 999 // tamanho da tabela hash 
 
 enum NODE_TYPE{
 	NT_DCL 				= 1000, 
@@ -47,7 +47,7 @@ struct SYMBOL_LIST {
 /**
  * Ponteiro para tabela hash de simbolos.
  */
-struct SYMBOL *symbol_hash_table;
+struct SYMBOL symbol_hash_table[HASH_TABLE_SIZE];
 
 /**
  * Usadado para declaração de variáveis
@@ -79,6 +79,7 @@ struct FLOW {
 	struct AST* cond; //<! condição
 	struct AST* then; //<! ramo THEN ou list
 	struct AST* el; //<! ramo opcional ELSE
+	struct AST* atb;
 };
 struct SYMASG{
   int nodetype;
@@ -126,17 +127,21 @@ AST* new_ref(SYMBOL *symbol);
  */
 AST* new_call(SYMBOL *symbol, AST* ast);
 
-AST *newasgn(struct SYMBOL *s , struct AST *v);
+/**
+ *
+ */
+AST *newasgn(SYMBOL *s , AST *v);
 
 /**
- * Guarda na tabela hash.
+ * Guarda na tabela hash. 
+ * Ocorre erro em caso de colisão de mapeamento de nome
  **/
 SYMBOL* lookup(char *symbol);
 
 /**
  * Fluxo condicional, laço while, for etc . . .
  */
-AST *new_flow(int node_type, AST *cond, AST *tl, AST *tr);
+AST *new_flow(int node_type, AST *cond, AST *tl, AST *tr, AST *atb);
 
 // imprime a tabela
 void printTable();
