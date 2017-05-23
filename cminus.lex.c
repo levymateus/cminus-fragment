@@ -922,27 +922,27 @@ YY_RULE_SETUP
 case 22:
 YY_RULE_SETUP
 #line 48 "cminus.l"
-{ printf("<if>\n"); return IF;}
+{ /*printf("<if>\n");*/ return IF;}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
 #line 49 "cminus.l"
-{ printf("<else>\n"); return ELSE;}
+{ /*printf("<else>\n");*/ return ELSE;}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
 #line 50 "cminus.l"
-{ printf("<while>\n"); return WHILE;}
+{ /*printf("<while>\n");*/ return WHILE;}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
 #line 51 "cminus.l"
-{ printf("<for>\n"); return FOR;}
+{ /*printf("<for>\n");*/ return FOR;}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
 #line 52 "cminus.l"
-{ printf("<extern>\n"); return EXTERN; }
+{ /*printf("<extern>\n");*/ return EXTERN; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
@@ -952,33 +952,36 @@ YY_RULE_SETUP
 case 28:
 YY_RULE_SETUP
 #line 54 "cminus.l"
-{ printf("<return>\n"); return RETURN; }
+{ /*printf("<return>\n");*/ return RETURN; }
 	YY_BREAK
 case 29:
-#line 57 "cminus.l"
+YY_RULE_SETUP
+#line 56 "cminus.l"
+{ /*printf("int ");*/ return INT; }
+	YY_BREAK
 case 30:
 YY_RULE_SETUP
 #line 57 "cminus.l"
-{ printf("<type>\n"); return CHAR;} // tipos de variavel
+{ /*printf("char ");*/ return CHAR;} // tipos de variavel
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
 #line 59 "cminus.l"
 { 
 	yylval.symbol = lookup(yytext); 
-	printf("<id>\n"); 
+	//printf("<id>\n"); 
 	return ID;
 } //nomes de variáveis e funcções
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
 #line 65 "cminus.l"
-{ yylval.intcon = atoi(yytext); printf("<intcon> %d\n", yylval.intcon ); return INTCON;}// numero inteiro
+{ yylval.intcon = atoi(yytext); /*printf("<intcon> %d\n", yylval.intcon );*/ return INTCON;}// numero inteiro
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
 #line 67 "cminus.l"
-{ printf("<comment>\n"); } // comentários
+{ /*printf("<comment>\n");*/ } // comentários
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
@@ -995,7 +998,7 @@ case 36:
 /* rule 36 can match eol */
 YY_RULE_SETUP
 #line 73 "cminus.l"
-{ printf("nova linha\n"); return EOL; } // nova linha
+{ /*printf("nova linha\n");*/ return EOL; } // nova linha
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
@@ -1007,7 +1010,7 @@ YY_RULE_SETUP
 #line 76 "cminus.l"
 YY_FATAL_ERROR( "flex scanner jammed" );
 	YY_BREAK
-#line 1011 "cminus.lex.c"
+#line 1014 "cminus.lex.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 

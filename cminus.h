@@ -2,6 +2,7 @@
 
 /* interface com o lexer */
 extern int yylineno;
+extern char* yytext;
 extern void yyrestart();
 extern int yyparse();
 extern int yylex(void);
@@ -142,6 +143,9 @@ SYMBOL* lookup(char *symbol);
  * Fluxo condicional, laço while, for etc . . .
  */
 AST *new_flow(int node_type, AST *cond, AST *tl, AST *tr, AST *atb);
+
+
+AST *new_flow2(int node_type, AST *assg1, AST *cond, AST *assg2, AST* tl);
 
 // imprime a tabela
 void printTable();

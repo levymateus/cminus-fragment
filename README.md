@@ -7,5 +7,10 @@ Implementation of a fragment of the C-- program language
 • Language especifications (Univ. of Arizona - Saumya K. Debray): https://www2.cs.arizona.edu/~debray/Teaching/CSc453/DOCS/cminusminusspec.html ( based on here )
 
 # Tools
-  flex
-  bison
+ • flex; 
+ • bison
+
+# Repository
+
+• link: https://github.com/levymateus/cminus-fragment
+

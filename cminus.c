@@ -84,7 +84,7 @@ static int call_user(FUNC_CALL* call){
 	if(!function->name){
 		yyerror("chamada para funcao %s indefinida", function->name);
 		exit(0);
-	}else printf("chamada pra a funcao %s ", function->name );
+	}else printf("chamada pra a funcao %s \n", function->name );
 
 	//arg_list = function->
 
@@ -176,6 +176,7 @@ int evaluation(AST *ast){
 		case '=': return ((struct SYMASG *)ast)->symbol->int_value = evaluation(((struct SYMASG *)ast)->valor); break;
 
 		case NT_FUNC_CALL: // chamada para função
+			//printf("chamada para a função \n");
 			return call_user( (FUNC_CALL*) ast );
 		case IF:
 			if( ( ( (FLOW*) ast)->cond) != 0 ){
@@ -206,6 +207,15 @@ int evaluation(AST *ast){
 
 			}
 		break;
+		case FOR:
+			evaluation( (AST*) ( (FLOW*) ast)->then );
+			if( ( (FLOW*) ast)->el ){
+				while(evaluation( ((FLOW*) ast)->cond) != 0){
+					evaluation( (AST*) ( (FLOW*) ast)->atb );
+					value = evaluation( (AST*) ( (FLOW*) ast)->el );
+				}
+
+			}
 		default: 
 			printf("Erro interno: bad node %c\n", ast->node_type);
 			break;
@@ -297,7 +307,24 @@ AST *new_flow(int node_type, AST *cond, AST *tl, AST *tr, AST* atb){
 	return (FLOW*) p;
 }
 
+AST *new_flow2(int node_type, AST *assg1, AST *cond, AST *assg2, AST* tl){
+	FLOW* p = calloc(1, sizeof(FLOW));
 
+	//printf("flow\n");
+	
+	if(!p){
+		yyerror("new_flow: sem espaco na memoria\n");
+		exit(0);
+	}
+
+	p->node_type = node_type;
+	p->cond = cond;
+	p->then = assg1;
+	p->el = assg2;
+	p->atb = tl;
+
+	return (FLOW*) p;
+}
 
 void yyerror(char *s, ...){
   va_list ap;
@@ -319,5 +346,9 @@ char **argv;
 
 	printf("\n");
 
-  return yyparse();
+  yyparse();
+
+  printTable();
+
+  return 0;
 }

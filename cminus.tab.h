@@ -65,11 +65,12 @@ extern int yydebug;
     EXTERN = 275,
     VOID = 276,
     RETURN = 277,
-    EOL = 278,
-    IF = 279,
-    ELSE = 280,
-    WHILE = 281,
-    FOR = 282
+    INT = 278,
+    EOL = 279,
+    IF = 280,
+    ELSE = 281,
+    WHILE = 282,
+    FOR = 283
   };
 #endif
 
@@ -85,7 +86,7 @@ union YYSTYPE
 	struct AST *ast;
 	struct SYMBOL_LIST *symbol_list;
 
-#line 89 "cminus.tab.h" /* yacc.c:1909  */
+#line 90 "cminus.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;
