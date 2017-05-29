@@ -80,14 +80,14 @@ struct FLOW {
 	struct AST* cond; //<! condição
 	struct AST* then; //<! ramo THEN ou list
 	struct AST* el; //<! ramo opcional ELSE
-	struct AST* atb;
+	struct AST* atb;//<! atribuição
 };
+
 struct SYMASG{
   int nodetype;
   struct SYMBOL *symbol;
   struct AST *valor;
 };
-
 
 typedef struct AST AST;
 typedef struct INTCON_NUMBER INTCON_NUMBER;

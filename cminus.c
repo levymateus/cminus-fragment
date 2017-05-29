@@ -160,18 +160,25 @@ int evaluation(AST *ast){
 	switch(ast->node_type){
 		case INTCON: return ((INTCON_NUMBER *) ast)->number;
 		case NT_REF: return ((SYMBOL_REF* )ast)->symbol->int_value;
-		case ADD: return evaluation(ast->left) + evaluation(ast->right);
+		case ADD: 
+			//printf("add\n");
+			return evaluation(ast->left) + evaluation(ast->right);
 		case SUB: return evaluation(ast->left) - evaluation(ast->right);
 		case MUL: return evaluation(ast->left) * evaluation(ast->right);
 		case DIV: return evaluation(ast->left) / evaluation(ast->right);
-		case OR: return evaluation(ast->left) || evaluation(ast->right);
-		case AND: return evaluation(ast->left) && evaluation(ast->right);
-		case GREATER_THAN: return evaluation(ast->left) > evaluation(ast->right);
-		case LESSER_THAN:	return evaluation(ast->left) < evaluation(ast->right);
-		case DIFFERENT: return evaluation(ast->left) != evaluation(ast->right);
-		case EQUAL: return evaluation(ast->left) == evaluation(ast->right);
-		case GREATER_THAN_EQUAL: return evaluation(ast->left) >= evaluation(ast->right);
-		case LESSER_THAN_EQUAL: return evaluation(ast->left) <= evaluation(ast->right);
+		case OR: return (evaluation(ast->left) || evaluation(ast->right)) ? 1 : 0;
+		case AND: return (evaluation(ast->left) && evaluation(ast->right)) ? 1 : 0;
+		case GREATER_THAN: 
+			value = (evaluation(ast->left) > evaluation(ast->right)) ? 1 : 0;
+			printf("%d\n", value);
+			return value;
+		case LESSER_THAN:	
+			//printf("menor que\n");
+			return (evaluation(ast->left) < evaluation(ast->right)) ? 1 : 0;
+		case DIFFERENT: return (evaluation(ast->left) != evaluation(ast->right)) ? 1 : 0;
+		case EQUAL: return (evaluation(ast->left) == evaluation(ast->right)) ? 1 : 0;
+		case GREATER_THAN_EQUAL: return (evaluation(ast->left) >= evaluation(ast->right)) ? 1 : 0;
+		case LESSER_THAN_EQUAL: return (evaluation(ast->left) <= evaluation(ast->right)) ? 1 : 0;
 
 		case '=': return ((struct SYMASG *)ast)->symbol->int_value = evaluation(((struct SYMASG *)ast)->valor); break;
 
@@ -179,21 +186,24 @@ int evaluation(AST *ast){
 			//printf("chamada para a função \n");
 			return call_user( (FUNC_CALL*) ast );
 		case IF:
-			if( ( ( (FLOW*) ast)->cond) != 0 ){
+			printf("condicao %d\n", evaluation( (((FLOW*) ast)->cond) ));
+			if( evaluation( (((FLOW*) ast)->cond) ) != 0 ){
 				
-				if( ( (FLOW*) ast)->then ){
-					//printf("teste1\n");
-					return evaluation( (AST*) ( (FLOW*) ast)->then );
+				if( ((FLOW*) ast)->then ){
+					printf("fazer\n");
+					return evaluation( ((FLOW*) ast)->then );
 				}
 				else{
+					printf("falso\n");
 					return 0;
 				}
 
 				if( ( (FLOW*) ast)->el ){
-					//printf("teste2\n");
-					return evaluation( ( (FLOW*) ast)->el );
+					printf("else\n");
+					return evaluation( ((FLOW*) ast)->el );
 				}
 				else {
+					printf("else falso\n");
 					return 0;
 				}
 
@@ -291,7 +301,7 @@ AST *new_flow(int node_type, AST *cond, AST *tl, AST *tr, AST* atb){
 	assert(cond!=NULL||tl!=NULL||tr!=NULL);
 	FLOW* p = calloc(1, sizeof(FLOW));
 
-	//printf("flow\n");
+	//printf("new flow %d\n", node_type);
 	
 	if(!p){
 		yyerror("new_flow: sem espaco na memoria\n");
